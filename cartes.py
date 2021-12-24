@@ -32,6 +32,8 @@ class MainWindow(QMainWindow):
 
         self.webView = myWebView()
 
+        table_panel = QSplitter(Qt.Horizontal)
+
         controls_panel = QtWidgets.QGridLayout()
         mysplit = QSplitter(Qt.Vertical)
 
@@ -45,15 +47,21 @@ class MainWindow(QMainWindow):
         # create the USER dropdown box
         _label_user = QLabel('User: ', self)
         _label_user.setFixedSize(40, 20)
-        self.from_box = QComboBox()
-        self.from_box.setEditable(True)
-        self.from_box.completer().setCompletionMode(QCompleter.PopupCompletion)
-        self.from_box.setInsertPolicy(QComboBox.NoInsert)
+        self.user_box = QComboBox()
+        self.user_box.setEditable(True)
+        self.user_box.completer().setCompletionMode(QCompleter.PopupCompletion)
+        self.user_box.setInsertPolicy(QComboBox.NoInsert)
         # controls_panel.addWidget(_label,0,0,1,0,QtCore.Qt.AlignmentFlag.AlignCenter)
         # controls_panel.addWidget(self.from_box)
 
         # create the ADD USER button
-        self.go_button = QPushButton("Add user")
+        self.add_user_button = QPushButton("Add user")
+        self.add_user_button.setGeometry(4, 4, 4, 4)
+        self.add_user_button.clicked.connect(self.button_Go)
+        # controls_panel.addWidget(self.go_button)
+
+        # create the Go button
+        self.go_button = QPushButton("Find \n a \n way !")
         self.go_button.setGeometry(4, 4, 4, 4)
         self.go_button.clicked.connect(self.button_Go)
         # controls_panel.addWidget(self.go_button)
@@ -78,24 +86,41 @@ class MainWindow(QMainWindow):
         # controls_panel.addWidget(_label)
         # controls_panel.addWidget(self.to_box)
 
-        controls_panel.addWidget(
-            _label_to, 1, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        controls_panel.addWidget(
-            self.to_box, 1, 1, QtCore.Qt.AlignmentFlag.AlignLeft)
-        controls_panel.addWidget(
-            _label_from, 2, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        controls_panel.addWidget(
-            self.from_box, 2, 1, QtCore.Qt.AlignmentFlag.AlignLeft)
-        controls_panel.addWidget(
-            _label_user, 3, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        controls_panel.addWidget(self.go_button, 3, 1,
-                                 QtCore.Qt.AlignmentFlag.AlignLeft)
 
         # create the results table widget
         self.tableWidget = QTableWidget()
         self.tableWidget.doubleClicked.connect(self.table_Click)
         self.rows = []
-        controls_panel.addWidget(self.tableWidget)
+
+        #Adding previously created widgets
+        
+        #User
+        controls_panel.addWidget(
+            _label_user, 1, 0, QtCore.Qt.AlignmentFlag.AlignRight)
+        controls_panel.addWidget(self.user_box, 1, 1,
+                                 QtCore.Qt.AlignmentFlag.AlignLeft)
+        
+        #Add user
+        controls_panel.addWidget(self.add_user_button, 1, 2,
+                                 QtCore.Qt.AlignmentFlag.AlignLeft)
+        
+        #From
+        controls_panel.addWidget(
+            _label_from, 2, 0, QtCore.Qt.AlignmentFlag.AlignRight)
+        controls_panel.addWidget(
+            self.from_box, 2, 1, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+        #To
+        controls_panel.addWidget(
+            _label_to, 3, 0, QtCore.Qt.AlignmentFlag.AlignRight)
+        controls_panel.addWidget(
+            self.to_box, 3, 1, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+        #Go button
+        controls_panel.addWidget(self.go_button,2, 2, 2, 1)
+        
+
+        controls_panel.addWidget(self.tableWidget, 4, 0, 1, 3)
 
         # create the HOPS dropdown box
         # _label = QLabel('Hops: ', self)
@@ -144,6 +169,8 @@ class MainWindow(QMainWindow):
         for row in rows:
             self.from_box.addItem(str(row[0]))
             self.to_box.addItem(str(row[0]))
+            self.user_box.addItem(str(row[0]))
+
 
     def table_Click(self):
         k = 0
