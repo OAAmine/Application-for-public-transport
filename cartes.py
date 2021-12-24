@@ -33,7 +33,6 @@ class MainWindow(QMainWindow):
 
         self.webView = myWebView()
 
-        table_panel = QSplitter(Qt.Horizontal)
 
         controls_panel = QtWidgets.QGridLayout()
         mysplit = QSplitter(Qt.Vertical)
@@ -61,8 +60,14 @@ class MainWindow(QMainWindow):
        
         # create the delete history button
         self.delete_history_button = QPushButton("Delete history")
+        # self.delete_history_button.setGeometry(4, 4, 4, 4)
+        self.delete_history_button.clicked.connect(self.delete_history)        
+        
+        
+        # create the show history button
+        self.show_history_button = QPushButton("Show history")
         # self.show_history_button.setGeometry(4, 4, 4, 4)
-        self.delete_history_button.clicked.connect(self.delete_history)
+        self.show_history_button.clicked.connect(self.show_history)
 
 
 
@@ -115,7 +120,7 @@ class MainWindow(QMainWindow):
                                  QtCore.Qt.AlignmentFlag.AlignLeft)
     
         #Show history
-        controls_panel.addWidget(self.delete_history_button, 1, 2,
+        controls_panel.addWidget(self.show_history_button, 1, 2,
                                  QtCore.Qt.AlignmentFlag.AlignLeft)
         
         
@@ -182,10 +187,10 @@ class MainWindow(QMainWindow):
         # controls_panel.addWidget(self.clear_button)
 
         # Add Folium map types options
-        # self.maptype_box = QComboBox()
-        # self.maptype_box.addItems(self.webView.maptypes)
-        # self.maptype_box.currentIndexChanged.connect(self.webView.setMap)
-        # controls_panel.addWidget(self.maptype_box)
+        self.maptype_box = QComboBox()
+        self.maptype_box.addItems(self.webView.maptypes)
+        self.maptype_box.currentIndexChanged.connect(self.webView.setMap)
+        controls_panel.addWidget(self.maptype_box)
 
         
         
@@ -263,10 +268,18 @@ class MainWindow(QMainWindow):
 
 
     def show_history(self):
-        return      
+        #clear map
+        self.webView.clearMap(self.maptype_box.currentIndex())
+        self.startingpoint = True
+        self.update()
+        #clear table
+        while (self.tableWidget.rowCount() > 0) :
+            self.tableWidget.removeRow(0)
+        #complete code => get history from user history table 
         
         
     def delete_history(self):
+        #remove all rows for a certain user
         return  
 
 
@@ -277,7 +290,7 @@ class MainWindow(QMainWindow):
 
         _fromstation = str(self.from_box.currentText())
         _tostation = str(self.to_box.currentText())
-        _hops = int(self.hop_box.currentText())
+        _hops = 10 #int(self.hop_box.currentText())
 
         self.rows = []
 
@@ -330,10 +343,7 @@ class MainWindow(QMainWindow):
 
         self.update()
 
-    def button_Clear(self):
-        self.webView.clearMap(self.maptype_box.currentIndex())
-        self.startingpoint = True
-        self.update()
+
 
     def mouseClick(self, lat, lng):
         self.webView.addPointMarker(lat, lng)
