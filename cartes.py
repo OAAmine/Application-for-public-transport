@@ -15,6 +15,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QMessageBox
 
 
 class MainWindow(QMainWindow):
@@ -40,9 +41,7 @@ class MainWindow(QMainWindow):
         # adding the map
         mysplit.addWidget(self.webView)
 
-        main.layout().addLayout(controls_panel)
 
-        main.layout().addWidget(mysplit)
 
         # create the USER dropdown box
         _label_user = QLabel('User: ', self)
@@ -51,64 +50,96 @@ class MainWindow(QMainWindow):
         self.user_box.setEditable(True)
         self.user_box.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.user_box.setInsertPolicy(QComboBox.NoInsert)
-        # controls_panel.addWidget(_label,0,0,1,0,QtCore.Qt.AlignmentFlag.AlignCenter)
-        # controls_panel.addWidget(self.from_box)
+
 
         # create the ADD USER button
         self.add_user_button = QPushButton("Add user")
-        self.add_user_button.setGeometry(4, 4, 4, 4)
-        self.add_user_button.clicked.connect(self.button_Go)
-        # controls_panel.addWidget(self.go_button)
+        # self.add_user_button.setGeometry(4, 4, 4, 4)
+        self.add_user_button.clicked.connect(self.add_user)
+
+       
+       
+        # create the delete history button
+        self.delete_history_button = QPushButton("Delete history")
+        # self.show_history_button.setGeometry(4, 4, 4, 4)
+        self.delete_history_button.clicked.connect(self.delete_history)
+
+
+
 
         # create the Go button
         self.go_button = QPushButton("Find \n a \n way !")
         self.go_button.setGeometry(4, 4, 4, 4)
         self.go_button.clicked.connect(self.button_Go)
-        # controls_panel.addWidget(self.go_button)
 
         # create the FROM dropdown box
         _label_from = QLabel('From: ', self)
         _label_from.setFixedSize(40, 20)
         self.from_box = QComboBox()
+        self.from_box.setFixedSize(250,25)
         self.from_box.setEditable(True)
         self.from_box.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.from_box.setInsertPolicy(QComboBox.NoInsert)
-        # controls_panel.addWidget(_label)
-        # controls_panel.addWidget(self.from_box)
+
 
         # create the TO dropdown box
         _label_to = QLabel('To: ', self)
         _label_to.setFixedSize(25, 20)
         self.to_box = QComboBox()
+        self.to_box.setFixedSize(250,25)
         self.to_box.setEditable(True)
         self.to_box.completer().setCompletionMode(QCompleter.PopupCompletion)
         self.to_box.setInsertPolicy(QComboBox.NoInsert)
-        # controls_panel.addWidget(_label)
-        # controls_panel.addWidget(self.to_box)
+
 
 
         # create the results table widget
         self.tableWidget = QTableWidget()
         self.tableWidget.doubleClicked.connect(self.table_Click)
         self.rows = []
-
-        #Adding previously created widgets
         
+        
+        
+        ###################"###################"###################""###################"###################"
+        #Laying out the previously created widgets
+        ###################"###################"###################"###################"###################"###################"
+        
+
+
+
+        ############################################# ROW 1 ############################################################
         #User
         controls_panel.addWidget(
             _label_user, 1, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        controls_panel.addWidget(self.user_box, 1, 1,
+        controls_panel.addWidget(self.user_box, 1, 1, 
+                                 QtCore.Qt.AlignmentFlag.AlignLeft)
+    
+        #Show history
+        controls_panel.addWidget(self.delete_history_button, 1, 2,
                                  QtCore.Qt.AlignmentFlag.AlignLeft)
         
+        
+        #Delete history
+        controls_panel.addWidget(self.delete_history_button, 1, 3,
+                                 QtCore.Qt.AlignmentFlag.AlignLeft)
+
         #Add user
-        controls_panel.addWidget(self.add_user_button, 1, 2,
+        controls_panel.addWidget(self.add_user_button, 1, 4,
                                  QtCore.Qt.AlignmentFlag.AlignLeft)
         
+        
+        ############################################# ROW 2 ############################################################
+
         #From
         controls_panel.addWidget(
             _label_from, 2, 0, QtCore.Qt.AlignmentFlag.AlignRight)
         controls_panel.addWidget(
             self.from_box, 2, 1, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+
+
+
+        ############################################# ROW 3 ############################################################
 
         #To
         controls_panel.addWidget(
@@ -120,8 +151,17 @@ class MainWindow(QMainWindow):
         controls_panel.addWidget(self.go_button,2, 2, 2, 1)
         
 
+        ############################################# ROW 4 ############################################################
+
+        #Table 
         controls_panel.addWidget(self.tableWidget, 4, 0, 1, 3)
 
+        
+        
+        main.layout().addLayout(controls_panel)
+        main.layout().addWidget(mysplit)
+        
+        
         # create the HOPS dropdown box
         # _label = QLabel('Hops: ', self)
         # _label.setFixedSize(20,20)
@@ -147,29 +187,49 @@ class MainWindow(QMainWindow):
         # self.maptype_box.currentIndexChanged.connect(self.webView.setMap)
         # controls_panel.addWidget(self.maptype_box)
 
+        
+        
+        
         # opening window in maximized size
         self.showMaximized()
 
         # call function to connect to database
         self.connect_DB()
-
+        self.show_stations_in_lists()
+        self.show_users()
         self.startingpoint = True
         self.show()
 
+
+    #show users in the list
+    def show_users(self):
+        self.cursor.execute(
+             """SELECT name FROM users ORDER BY name""")
+        self.conn.commit()
+        rows_name = self.cursor.fetchall()
+
+        for row in rows_name:
+            self.user_box.addItem(str(row[0]))  
+    
+    
+    #connect to the Data Base
     def connect_DB(self):
         self.conn = psycopg2.connect(
             database="metro", user="postgres", host="localhost", password="password")
+        
+    #show the stations in the list
+    def show_stations_in_lists(self):
         self.cursor = self.conn.cursor()
-
         self.cursor.execute(
             """SELECT distinct nom_long FROM metros ORDER BY nom_long""")
         self.conn.commit()
         rows = self.cursor.fetchall()
-
         for row in rows:
             self.from_box.addItem(str(row[0]))
             self.to_box.addItem(str(row[0]))
-            self.user_box.addItem(str(row[0]))
+
+
+      
 
 
     def table_Click(self):
@@ -188,6 +248,29 @@ class MainWindow(QMainWindow):
 
                 self.webView.addMarker(lat, lon)
             k = k + 1
+
+
+    #just a simple dialog box that asks for the name, maybe we'll add home address ? to be discussed if we still have time 
+    def add_user(self):
+        name, done1 = QtWidgets.QInputDialog.getText(
+             self, 'Input Dialog', 'Enter your name:')
+
+        if done1 :
+            self.cursor.execute(
+             f"""INSERT INTO users(name) VALUES ('{name}')""")
+            self.conn.commit()
+            self.user_box.addItem(f"""{name}""")
+
+
+    def show_history(self):
+        return      
+        
+        
+    def delete_history(self):
+        return  
+
+
+
 
     def button_Go(self):
         self.tableWidget.clearContents()
