@@ -159,7 +159,7 @@ class MainWindow(QMainWindow):
         ############################################# ROW 4 ############################################################
 
         #Table 
-        controls_panel.addWidget(self.tableWidget, 4, 0, 1, 3)
+        controls_panel.addWidget(self.tableWidget, 4, 0, 1, 5)
 
         
         
@@ -187,10 +187,10 @@ class MainWindow(QMainWindow):
         # controls_panel.addWidget(self.clear_button)
 
         # Add Folium map types options
-        self.maptype_box = QComboBox()
-        self.maptype_box.addItems(self.webView.maptypes)
-        self.maptype_box.currentIndexChanged.connect(self.webView.setMap)
-        controls_panel.addWidget(self.maptype_box)
+        # self.maptype_box = QComboBox()
+        # self.maptype_box.addItems(self.webView.maptypes)
+        # self.maptype_box.currentIndexChanged.connect(self.webView.setMap)
+        # controls_panel.addWidget(self.maptype_box)
 
         
         
