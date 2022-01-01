@@ -141,23 +141,23 @@ class MainWindow(QMainWindow):
         main.layout().addWidget(mysplit)
 
         # create the HOPS dropdown box
-        # _label = QLabel('Hops: ', self)
-        # _label.setFixedSize(20,20)
-        # self.hop_box = QComboBox()
-        # self.hop_box.addItems( ['1', '2', '3', '4', '5'] )
-        # self.hop_box.setCurrentIndex( 2 )
-        # controls_panel.addWidget(_label)
-        # controls_panel.addWidget(self.hop_box)
+        _label = QLabel('Hops: ', self)
+        _label.setFixedSize(20,20)
+        self.hop_box = QComboBox()
+        self.hop_box.addItems( ['1', '2', '3', '4', '5'] )
+        self.hop_box.setCurrentIndex( 2 )
+        controls_panel.addWidget(_label)
+        controls_panel.addWidget(self.hop_box)
 
         # create the GO button
-        # self.go_button = QPushButton("Go!")
-        # self.go_button.clicked.connect(self.button_Go)
-        # controls_panel.addWidget(self.go_button)
+        self.go_button = QPushButton("Go!")
+        self.go_button.clicked.connect(self.button_Go)
+        controls_panel.addWidget(self.go_button)
 
         # create the Clear button
-        # self.clear_button = QPushButton("Clear")
-        # self.clear_button.clicked.connect(self.button_Clear)
-        # controls_panel.addWidget(self.clear_button)
+        #self.clear_button = QPushButton("Clear")
+        #self.clear_button.clicked.connect(self.button_Clear)
+        #controls_panel.addWidget(self.clear_button)
 
         # Add Folium map types options
         self.maptype_box = QComboBox()
@@ -318,7 +318,7 @@ class MainWindow(QMainWindow):
 
         _fromstation = str(self.from_box.currentText())
         _tostation = str(self.to_box.currentText())
-        _hops = 10  # int(self.hop_box.currentText())
+        _hops = int(self.hop_box.currentText())
 
         self.rows = []
 
