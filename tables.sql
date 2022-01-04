@@ -1,3 +1,5 @@
+DROP DATABASE projet;
+CREATE DATABASE projet;
 \c projet
 DROP TABLE vehicle;
 CREATE TABLE vehicle (
@@ -31,8 +33,11 @@ CREATE TABLE p_users (
 
 CREATE TABLE p_history (
 	id SERIAL REFERENCES p_users(id),
-	element TEXT PRIMARY KEY,
+	element TEXT,
 	PRIMARY KEY (id, element)
 );
+
+
+INSERT INTO p_users(username) values ('anonymous');
 
 /* ----------------------------------------- */

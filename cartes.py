@@ -153,9 +153,9 @@ class MainWindow(QMainWindow):
         controls_panel.addWidget(self.go_button)
 
         # create the Clear button
-        #self.clear_button = QPushButton("Clear")
-        # self.clear_button.clicked.connect(self.button_Clear)
-        # controls_panel.addWidget(self.clear_button)
+        self.clear_button = QPushButton("Clear")
+        self.clear_button.clicked.connect(self.button_Clear)
+        controls_panel.addWidget(self.clear_button)
 
         # Add Folium map types options
         self.maptype_box = QComboBox()
@@ -291,7 +291,6 @@ class MainWindow(QMainWindow):
                 # # print(m4)   
 
             numrows = len(elements)
-            numcols = len(elements[-1]) - math.floor(len(elements[-1]) / 3.0) - 1 
             self.tableWidget.setRowCount(numrows)
             self.tableWidget.setColumnCount(7)
 
@@ -324,19 +323,28 @@ class MainWindow(QMainWindow):
 
             header = self.tableWidget.horizontalHeader()
             j = 0
-            # while j < numcols : 
-            #     header.setSectionResizeMode(j, QHeaderView.ResizeToContents)
-            #     j = j+1
+
             
             self.update()	
 
 
-        # complete code => get history from user history table
     
     
     
     
     def delete_history(self):
+        _current_user = str(self.user_box.currentText())
+        self.cursor.execute(
+        f"""SELECT id FROM p_users WHERE username = '{_current_user}'""")
+        self.conn.commit()
+        _current_user_id = self.cursor.fetchall()
+
+        self.cursor.execute(
+        f"""delete from p_history where id = '{_current_user_id[0][0]}'""")
+        self.conn.commit()
+
+
+               
         # remove all rows for a certain user
         return
 
