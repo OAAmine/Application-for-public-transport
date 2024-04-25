@@ -1,4 +1,3 @@
-Python 3.x
 PyQt5
 Folium
 Psycopg2
