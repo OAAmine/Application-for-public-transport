@@ -1,0 +1,6 @@
+Python 3.x
+PyQt5
+Folium
+Psycopg2
+Jinja2
+Branca
